@@ -28,34 +28,38 @@ public class ToastyView implements IToastyView{
 
     @Override
     public Toast createToast(Context context, String text) {
-        LinearLayout layout = new LinearLayout(context);//创建一个线性布局对象
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setGravity(Gravity.CENTER);
+        try{
+            LinearLayout layout = new LinearLayout(context);//创建一个线性布局对象
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setGravity(Gravity.CENTER);
 
-        Drawable drawableFrame = ToastyUtils.getDrawable(context, R.drawable.toast_frames);
-        ToastyUtils.setBackground(layout, drawableFrame);
+            Drawable drawableFrame = ToastyUtils.getDrawable(context, R.drawable.toast_frames);
+            ToastyUtils.setBackground(layout, drawableFrame);
 
-        toastTextView = new TextView(context);
-        toastTextView.setText(text);
-        toastTextView.setTextColor(Color.parseColor("#FFFFFF"));
-        toastTextView.setTypeface(currentTypeface);
-        toastTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+            toastTextView = new TextView(context);
+            toastTextView.setText(text);
+            toastTextView.setTextColor(Color.parseColor("#FFFFFF"));
+            toastTextView.setTypeface(currentTypeface);
+            toastTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
-        toastIcon = new ImageView(context);
+            toastIcon = new ImageView(context);
 
-        LinearLayout.LayoutParams imgviewParams = new LinearLayout.LayoutParams(
-                        ToastyUtils.dip2px(context, 24), ToastyUtils.dip2px(context, 24));
-        imgviewParams.setMargins(0, 0, ToastyUtils.dip2px(context, 5), 0);
+            LinearLayout.LayoutParams imgviewParams = new LinearLayout.LayoutParams(
+                    ToastyUtils.dip2px(context, 24), ToastyUtils.dip2px(context, 24));
+            imgviewParams.setMargins(0, 0, ToastyUtils.dip2px(context, 5), 0);
 
-        LinearLayout.LayoutParams textviewParams =
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams textviewParams =
+                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        layout.addView(toastIcon, imgviewParams);
-        layout.addView(toastTextView, textviewParams);
+            layout.addView(toastIcon, imgviewParams);
+            layout.addView(toastTextView, textviewParams);
 
-        mToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-        mToast.setView(layout);
+            mToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+            mToast.setView(layout);
+        }catch (Exception e){
+            mToast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+        }
         return mToast;
     }
 
@@ -63,6 +67,8 @@ public class ToastyView implements IToastyView{
     public void setText(String title) {
         if (toastTextView != null && !TextUtils.isEmpty(title)) {
             toastTextView.setText(title);
+        }else if(mToast !=null && !TextUtils.isEmpty(title)){
+            mToast.setText(title);
         }
     }
 
