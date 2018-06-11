@@ -43,7 +43,7 @@ public class ToastyConfig {
     static boolean isToastyViewChange = false;
 
     //吐司的位置
-    public static int GRAVITY = Gravity.BOTTOM;
+    public static int GRAVITY = Gravity.CENTER;
     public static int xOffset = 0;
     public static int yOffset = 0;
 
@@ -114,29 +114,24 @@ public class ToastyConfig {
         return this;
     }
 
-    public Dialog getDialog(final Context context) {
-        if (mDialog == null){
-            mDialog =  new AlertDialog.Builder(context)
-                    .setTitle("温馨提示")
-                    .setMessage("您没有开启通知权限，需要开启通知权限才可以弹出通知信息")
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ToastyUtils.openNotificationsEnabled(context);
-                        }
-                    })
-                    .create();
-        }
+    Dialog getDialog(final Context context) {
+        mDialog = new AlertDialog.Builder(context)
+                .setTitle("温馨提示")
+                .setMessage("您没有开启通知权限，需要开启通知权限才可以弹出通知信息")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToastyUtils.openNotificationsEnabled(context);
+                    }
+                })
+                .create();
         return mDialog;
     }
 
-    public void setDialog(Dialog dialog) {
-        this.mDialog = mDialog;
-    }
 }
