@@ -104,13 +104,15 @@ public class Toasty {
     }
 
     public void setDuration(int t) {
-        mToastyView.getToast().setDuration(t);
         if (t == android.widget.Toast.LENGTH_SHORT) {
             this.time = 2000;
+            mToastyView.getToast().setDuration(t);
         } else if (t == android.widget.Toast.LENGTH_LONG) {
             this.time = 3000;
+            mToastyView.getToast().setDuration(t);
         } else if (t > 1000) {
             this.time = t;
+            mToastyView.getToast().setDuration(android.widget.Toast.LENGTH_LONG);
         }
     }
 
