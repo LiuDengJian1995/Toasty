@@ -1,11 +1,10 @@
 package com.liudengjian.toasty;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.widget.Toast;
 
 /**
- * Created by hp on 2018/5/11.
+ * Created by 刘登建 on 2018/5/11.
  */
 
 public interface IToastyView {

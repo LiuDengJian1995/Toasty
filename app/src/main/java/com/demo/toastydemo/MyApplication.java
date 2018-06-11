@@ -14,6 +14,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ToastyConfig.initApplication(this);
+        ToastyConfig.getInstance().initApplication(this);
     }
 }

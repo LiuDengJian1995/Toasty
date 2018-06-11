@@ -6,15 +6,10 @@ package com.liudengjian.toasty;
 
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class Toasty {
 
@@ -25,8 +20,6 @@ public class Toasty {
 
     private Context mContext;
 
-    private Object mObj;
-    private Method showMethod, hideMethod;
     private IToastyView mToastyView;
 
     private String text = "";
@@ -57,6 +50,7 @@ public class Toasty {
     }
 
     public static Toasty makeText(Context context, String text, int delay, int type) {
+        ToastyUtils.checkNotificationsEnabled(context);
         if (ToastyConfig.isToastyViewChange) {
             instance = null;
             ToastyConfig.isToastyViewChange = false;
@@ -96,7 +90,7 @@ public class Toasty {
 
     void setShowGravity(Context context){
         if (ToastyConfig.GRAVITY == Gravity.BOTTOM && ToastyConfig.yOffset == 0) {
-            ToastyConfig.setGravity(context, Gravity.BOTTOM);
+            ToastyConfig.getInstance().setGravity(context, Gravity.BOTTOM);
         }
         if (instance.getToastyView() != null &&
                 instance.getToastyView().getToast() != null) {
@@ -110,6 +104,7 @@ public class Toasty {
     }
 
     public void setDuration(int t) {
+        mToastyView.getToast().setDuration(t);
         if (t == android.widget.Toast.LENGTH_SHORT) {
             this.time = 2000;
         } else if (t == android.widget.Toast.LENGTH_LONG) {
@@ -133,36 +128,22 @@ public class Toasty {
     }
 
     private void initTN() {
-        Field mTN;
-        if (mToastyView == null) {
-            if (ToastyConfig.getToastyView() != null) {
-                mToastyView = ToastyConfig.getToastyView();
-            } else {
-                mToastyView = new ToastyView();
-            }
-            mToastyView.createToast(mContext, text);
-        } else if (mToastyView != ToastyConfig.getToastyView()) {
-            if (ToastyConfig.getToastyView() != null) {
-                mToastyView = ToastyConfig.getToastyView();
-            } else {
-                mToastyView = new ToastyView();
-            }
-            mToastyView.createToast(mContext, text);
-        }
-        Class<android.widget.Toast> clazz = android.widget.Toast.class;
         try {
-            mTN = clazz.getDeclaredField("mTN");
-            mTN.setAccessible(true);
-            mObj = mTN.get(mToastyView.getToast());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                showMethod = mObj.getClass().getDeclaredMethod("show", IBinder.class);
-            } else {
-                showMethod = mObj.getClass().getDeclaredMethod("show", new Class<?>[0]);
+            if (mToastyView == null) {
+                if (ToastyConfig.getToastyView() != null) {
+                    mToastyView = ToastyConfig.getToastyView();
+                } else {
+                    mToastyView = new ToastyView();
+                }
+                mToastyView.createToast(mContext, text);
+            } else if (mToastyView != ToastyConfig.getToastyView()) {
+                if (ToastyConfig.getToastyView() != null) {
+                    mToastyView = ToastyConfig.getToastyView();
+                } else {
+                    mToastyView = new ToastyView();
+                }
+                mToastyView.createToast(mContext, text);
             }
-            hideMethod = mObj.getClass().getDeclaredMethod("hide", new Class<?>[0]);
-            Field mY = mObj.getClass().getDeclaredField("mY");
-            mY.setAccessible(true);
-            mY.set(mObj, ToastyUtils.dip2px(mContext, 68F));
             hasReflectException = false;
         } catch (Exception e) {
             hasReflectException = true;
@@ -171,14 +152,7 @@ public class Toasty {
 
     private void showToast() {
         try {
-            Field mNextView = mObj.getClass().getDeclaredField("mNextView");
-            mNextView.setAccessible(true);
-            mNextView.set(mObj, mToastyView.getToast().getView());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                showMethod.invoke(mObj, new Object[1]);
-            } else {
-                showMethod.invoke(mObj, new Object[0]);
-            }
+            mToastyView.getToast().show();
             hasReflectException = false;
         } catch (Exception e) {
             hasReflectException = true;
@@ -187,7 +161,7 @@ public class Toasty {
 
     private void hideToast() {
         try {
-            hideMethod.invoke(mObj, new Object[0]);
+            mToastyView.getToast().cancel();
             hasReflectException = false;
         } catch (Exception e) {
             hasReflectException = true;

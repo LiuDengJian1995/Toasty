@@ -1,12 +1,16 @@
 package com.liudengjian.toasty;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 
 /**
@@ -58,5 +62,37 @@ final class ToastyUtils {
     public static int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static boolean checkNotificationsEnabled(Context context){
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        boolean isOpened = manager.areNotificationsEnabled();
+        if (!isOpened) {
+            if (ToastyConfig.hintForceOpen){
+                if (context instanceof Activity){
+                    ToastyConfig.getInstance().getDialog(context).show();
+                }else if(ToastyConfig.isForceOpen){
+                    openNotificationsEnabled(context);
+                }
+            }else if(ToastyConfig.isForceOpen){
+                openNotificationsEnabled(context);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public static void  openNotificationsEnabled(Context context){
+        Intent localIntent = new Intent();
+        localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= 9) {
+            localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
+        } else if (Build.VERSION.SDK_INT <= 8) {
+            localIntent.setAction(Intent.ACTION_VIEW);
+            localIntent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
+            localIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
+        }
+        context.startActivity(localIntent);
     }
 }
