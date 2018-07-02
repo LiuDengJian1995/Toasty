@@ -1,4 +1,4 @@
-package com.liudengjian.toasty;
+﻿package com.liudengjian.toasty;
 
 /**
  * Created by 刘登建 on 2018/5/9.
@@ -6,14 +6,10 @@ package com.liudengjian.toasty;
 
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 
 public class Toasty {
-
-    private Handler handler;
 
     public static int LENGTH_SHORT = android.widget.Toast.LENGTH_SHORT;
     public static int LENGTH_LONG = android.widget.Toast.LENGTH_LONG;
@@ -23,7 +19,6 @@ public class Toasty {
     private IToastyView mToastyView;
 
     private String text = "";
-    private int time = 2500;
 
     private boolean hasReflectException = false;
 
@@ -74,21 +69,13 @@ public class Toasty {
         }
         this.mContext = context;
         initTN();
-        if (handler == null) {
-            handler = new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    Toasty.this.hideToast();
-                }
-            };
-        }
     }
 
     public void setText(String text) {
         this.text = text;
     }
 
-    void setShowGravity(Context context){
+    void setShowGravity(Context context) {
         if (ToastyConfig.GRAVITY == Gravity.BOTTOM && ToastyConfig.yOffset == 0) {
             ToastyConfig.getInstance().setGravity(context, Gravity.BOTTOM);
         }
@@ -105,13 +92,10 @@ public class Toasty {
 
     public void setDuration(int t) {
         if (t == android.widget.Toast.LENGTH_SHORT) {
-            this.time = 2000;
             mToastyView.getToast().setDuration(t);
         } else if (t == android.widget.Toast.LENGTH_LONG) {
-            this.time = 3000;
             mToastyView.getToast().setDuration(t);
         } else if (t > 1000) {
-            this.time = t;
             mToastyView.getToast().setDuration(android.widget.Toast.LENGTH_LONG);
         }
     }
@@ -123,9 +107,6 @@ public class Toasty {
                 return;
             }
             showToast();
-            handler.removeMessages(1);
-            handler.sendEmptyMessageDelayed(1, time);
-
         }
     }
 
@@ -155,15 +136,6 @@ public class Toasty {
     private void showToast() {
         try {
             mToastyView.getToast().show();
-            hasReflectException = false;
-        } catch (Exception e) {
-            hasReflectException = true;
-        }
-    }
-
-    private void hideToast() {
-        try {
-            mToastyView.getToast().cancel();
             hasReflectException = false;
         } catch (Exception e) {
             hasReflectException = true;
