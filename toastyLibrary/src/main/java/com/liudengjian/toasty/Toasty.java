@@ -78,6 +78,7 @@ public class Toasty {
         {
             //更新UI的操作，这里面的内容是在UI线程里面执行的
             mToastyView.setText(result);
+            showToast();
         }
     }
 
@@ -95,6 +96,7 @@ public class Toasty {
             mToastyView.setType(mContext, result);
         }
     }
+
 
     private Toasty(Context context) {
         if (context == null || context.getApplicationContext() == null) {
@@ -139,7 +141,7 @@ public class Toasty {
                 return;
             }
             new TextTask().execute(text);
-            showToast();
+
         }
     }
 
