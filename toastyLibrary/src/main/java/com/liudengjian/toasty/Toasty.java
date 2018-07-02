@@ -1,4 +1,4 @@
-﻿package com.liudengjian.toasty;
+package com.liudengjian.toasty;
 
 /**
  * Created by 刘登建 on 2018/5/9.
