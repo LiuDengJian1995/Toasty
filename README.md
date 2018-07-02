@@ -18,7 +18,7 @@ allprojects {
 
 ```groovy
 dependencies{
-   compile 'com.github.LiuDengJian1995:Toasty:v1.2.1'  //最新版本
+   compile 'com.github.LiuDengJian1995:Toasty:v1.2.3'  //最新版本
 }
 ```
 或者引用本地lib
