@@ -6,6 +6,8 @@ package com.liudengjian.toasty;
 
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 
@@ -57,11 +59,29 @@ public class Toasty {
         instance.setText(text);
 
         if (instance.mToastyView != null) {
-            instance.mToastyView.setType(context, type);
+            Message msg = new Message();
+            msg.what = 2;
+            msg.obj = type;
+            instance.mHandler.handleMessage(msg);
+//            instance.mToastyView.setType(context, type);
         }
         instance.setShowGravity(context);
         return instance;
     }
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            // call update gui method.
+            if (msg.what == 1){
+                String title = (String) msg.obj;
+                mToastyView.setText(title);
+            }else if(msg.what == 2){
+                int type = (int) msg.obj;
+                mToastyView.setType(mContext, type);
+            }
+        }
+    };
 
     private Toasty(Context context) {
         if (context == null || context.getApplicationContext() == null) {
@@ -102,7 +122,10 @@ public class Toasty {
 
     public final void show() {
         if (!hasReflectException) {
-            mToastyView.setText(text);
+            Message msg = new Message();
+            msg.what = 1;
+            msg.obj = text;
+            mHandler.handleMessage(msg);
             if (TextUtils.isEmpty(text)) {
                 return;
             }
